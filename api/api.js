@@ -1,64 +1,62 @@
-import AsyncStorage from 'react-native'
-const FLASHCARDS_STORAGE_KEY = "@FLASHCARDS_APP:decks" 
+import {AsyncStorage} from 'react-native';
+const FLASHCARDS_STORAGE_KEY = '@FLASHCARDS_APP';
 
-const initialState = {
-  React: {
-    title: 'React',
-    questions: [
-      {
-        question: 'What is React?',
-        answer: 'A library for managing user interfaces'
+export function getDecks() {
+  return AsyncStorage.getItem(FLASHCARDS_STORAGE_KEY).then(results => {
+    return JSON.parse(results);
+  });
+}
+
+export function getDeck(key) {
+  return AsyncStorage.getItem(FLASHCARDS_STORAGE_KEY).then(results => {
+    const data = JSON.parse(results);
+    return data[key];
+  });
+}
+
+export function saveDeckTitle({title, key}) {
+  return AsyncStorage.mergeItem(
+    FLASHCARDS_STORAGE_KEY,
+    JSON.stringify({
+      [key]: {
+        title: title,
+        questions: [],
       },
-      {
-        question: 'Where do you make Ajax requests in React?',
-        answer: 'The componentDidMount lifecycle event'
-      }
-    ]
-  },
-  JavaScript: {
-    title: 'JavaScript',
-    questions: [
-      {
-        question: 'What is a closure?',
-        answer: 'The combination of a function and the lexical environment within which that function was declared.'
-      }
-    ]
-  }
-}
-function setInitialState(){
-  AsyncStorage.setItem(FLASHCARDS_STORAGE_KEY, JSON.stringify(initialState))
-  return initialState;
+    }),
+  ).then(result => console.log(result));
 }
 
-export function decksResults (results) {
-  return results === null
-    ? setInitialState()
-    : JSON.parse(results)
-}
-export function getDecks () {
-  return AsyncStorage.getItem(FLASHCARDS_STORAGE_KEY)
-    .then(decksResults)
-}
-
-export function getDeck(key){
-  return AsyncStorage.getItem(FLASHCARDS_STORAGE_KEY, key)
-    .then(decksResults[key])
+export function submitQuestion(deck, key) {
+  console.log('API Submit Question', deck, key);
+  return AsyncStorage.mergeItem(
+    FLASHCARDS_STORAGE_KEY,
+    JSON.stringify({
+      [key]: deck,
+    }),
+  ).then(result => console.log(result));
 }
 
-export function saveDeck(title) {
-  // Check this API
-  AsyncStorage.setItem(FLASHCARDS_STORAGE_KEY, JSON.stringify({[title]: title: [title]}), () => {
-    AsyncStorage.getItem(FLASHCARDS_STORAGE_KEY, (err, result) => {
-      return JSON.parse(result);
-    });
-  })
-}
-
-export function addCardToDeck(deck, card) {
-  // Check this API
-  return AsyncStorage.mergeItem(FLASHCARDS_STORAGE_KEY, JSON.stringify({[deck]: {questions: card}}), () => { 
-    AsyncStorage.getItem(FLASHCARDS_STORAGE_KEY, (err, result) => {
-      return JSON.parse(result);
-    });
-  }
-}
+// const initialState = {
+//   React: {
+//     title: 'React',
+//     questions: [
+//       {
+//         question: 'What is React?',
+//         answer: 'A library for managing user interfaces'
+//       },
+//       {
+//         question: 'Where do you make Ajax requests in React?',
+//         answer: 'The componentDidMount lifecycle event'
+//       }
+//     ]
+//   },
+//   JavaScript: {
+//     title: 'JavaScript',
+//     questions: [
+//       {
+//         question: 'What is a closure?',
+//         answer: 'The combination of a function and the lexical environment within which that function was declared.'
+//       }
+//     ]
+//   }
+// }

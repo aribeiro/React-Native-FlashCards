@@ -1,89 +1,66 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, ScrollView} from 'react-native';
-import {Card as RNECard, Button} from 'react-native-elements';
+import {StyleSheet, Text, View, Image, ScrollView, Button} from 'react-native';
+
+import {MaterialHeaderButtons, Item} from './HeadersButtons';
+import DeckCard from './DeckCard';
+import * as API from '../api/api';
 
 class DeckList extends Component {
+  static navigationOptions = ({navigation}) => ({
+    title: 'FlashCards',
+    headerRight: (
+      <MaterialHeaderButtons>
+        <Item
+          title="add"
+          iconName="add"
+          onPress={() => navigation.navigate('AddDeck')}
+        />
+      </MaterialHeaderButtons>
+    ),
+
+    headerStyle: {
+      backgroundColor: '#6002ee',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  });
+
+  openDeck = index => {
+    this.props.navigation.navigate('Deck', {deckId: index});
+  };
+
+  state = {decks: [], loading: true};
+
+  componentDidMount() {
+    API.getDecks().then(data => {
+      this.setState({
+        decks: Object.entries(data).map(([key, value]) => ({key, value})),
+        loading: false,
+      });
+    });
+  }
+
   render() {
+    const {decks, loading} = this.state;
+    console.log('Deck List', decks);
     return (
-      <View style={{flex: 1, width:'100%'}}>
-        <ScrollView>
-
-          <RNECard title={'Javascript'} >
-            <Text style={{marginBottom: 10}}>Decks for Javascript</Text>
-            <Button
-              icon={{name: 'play-arrow', color: 'white'}}
-              backgroundColor="#03A9F4"
-              buttonStyle={{
-                borderRadius: 0,
-                marginLeft: 0,
-                marginRight: 0,
-                marginBottom: 0,
-              }}
-              title="START QUIZ"
-            />
-          </RNECard>
-
-          <RNECard title={'Ruby on Rails'}>
-            <Text style={{marginBottom: 10}}>Decks for Ruby on Rails</Text>
-            <Button
-              icon={{name: 'code'}}
-              backgroundColor="#03A9F4"
-              buttonStyle={{
-                borderRadius: 0,
-                marginLeft: 0,
-                marginRight: 0,
-                marginBottom: 0,
-              }}
-              title="START QUIZ"
-            />
-          </RNECard>
-
-          <RNECard title={'Python'}>
-            <Text style={{marginBottom: 10}}>Decks for Python</Text>
-            <Button
-              icon={{name: 'code'}}
-              backgroundColor="#03A9F4"
-              buttonStyle={{
-                borderRadius: 0,
-                marginLeft: 0,
-                marginRight: 0,
-                marginBottom: 0,
-              }}
-              title="START QUIZ"
-            />
-          </RNECard>
-
-          <RNECard title={'React'}>
-            <Text style={{marginBottom: 10}}>Decks for React</Text>
-            <Button
-              icon={{name: 'code'}}
-              backgroundColor="#03A9F4"
-              buttonStyle={{
-                borderRadius: 0,
-                marginLeft: 0,
-                marginRight: 0,
-                marginBottom: 0,
-              }}
-              title="START QUIZ"
-            />
-          </RNECard>
-
-          <RNECard title={'React Native'}>
-            <Text style={{marginBottom: 10}}>Decks for React Native</Text>
-            <Button
-              icon={{name: 'code'}}
-              backgroundColor="#03A9F4"
-              buttonStyle={{
-                borderRadius: 0,
-                marginLeft: 0,
-                marginRight: 0,
-                marginBottom: 0,
-              }}
-              title="START QUIZ"
-            />
-          </RNECard>
-
-        </ScrollView>
+      <View style={{flex: 1, width: '100%'}}>
+        {loading ? (
+          <Text>Loading ...</Text>
+        ) : (
+          <ScrollView>
+            {decks.map(deck => (
+              <DeckCard
+                key={deck.key}
+                title={deck.value.title}
+                cards={deck.value.questions.length}
+                onPress={() => this.openDeck(deck.key)}
+              />
+            ))}
+          </ScrollView>
+        )}
       </View>
     );
   }

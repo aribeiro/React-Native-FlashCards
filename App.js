@@ -1,34 +1,38 @@
 import React from 'react';
 import { StyleSheet, Text, View, StatusBar, Platform } from 'react-native';
+import { createMaterialTopTabNavigator, createStackNavigator, createAppContainer } from 'react-navigation'
 import { Constants } from 'expo'
 import DeckList from './components/DeckList'
 import DeckForm from './components/DeckForm'
 
+import CardForm from  './components/CardForm'
+import DeckCards from './components/DeckCards'
+import Quiz from './components/Quiz'
+// --------------------------------------------------------//
+// import { createStore } from 'redux'
+// import { Provider } from 'react-redux'
+// import reducer from './reducers'
 
-function FlashCardStatusBar ({backgroundColor, ...props}) {
-    return (
-        <View style={{ backgroundColor, height: Constants.statusBarHeight }}>
-            <StatusBar translucent backgroundColor={backgroundColor} {...props} />
-        </View>
-    )
-}
+const StackNavigator = createStackNavigator(
+  {
+    Home: DeckList,
+    AddDeck: DeckForm,
+    Deck: DeckCards,
+    Quiz: Quiz,
+    AddCard: CardForm
+  }
+);
+const Stack = createAppContainer(StackNavigator)
+
 
 export default class App extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <FlashCardStatusBar backgroundColor="red" barStyle="light-content" />
-        <DeckList />
-      </View>
+      <React.Fragment>
+        {/* <FlashCardStatusBar backgroundColor={styles.statusBar.backgroundColor} barStyle="light-content" /> */}
+        <Stack />
+      </React.Fragment>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

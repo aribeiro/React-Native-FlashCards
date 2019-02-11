@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, ScrollView} from 'react-native';
 import Button from './Button';
-import * as API from '../api/api';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {handleGetDeck} from '../actions/decks';
 
 class DeckCards extends Component {
   static navigationOptions = {
@@ -16,8 +19,6 @@ class DeckCards extends Component {
     },
   };
 
-  state = {loading: true, deck: null};
-
   addCard = () => {
     const {navigation} = this.props;
     const {deckId} = this.props.navigation.state.params;
@@ -30,15 +31,8 @@ class DeckCards extends Component {
     navigation.navigate('Quiz', {deckId: deckId});
   };
 
-  componentDidMount() {
-    API.getDeck(this.props.navigation.state.params.deckId).then(data =>
-      this.setState({deck: data, loading: false}),
-    );
-  }
-
   render() {
-    console.log(this.state);
-    const {loading, deck} = this.state;
+    const {loading, deck} = this.props;
 
     if (loading) {
       return (
@@ -64,7 +58,26 @@ class DeckCards extends Component {
   }
 }
 
-export default DeckCards;
+function mapStateToProps(state, ownProps) {
+  const { deckId } = ownProps.navigation.state.params;
+  return {
+    loading: state.loading,
+    deck: state.decks[deckId],
+  };
+}
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      handleGetDeck,
+    },
+    dispatch,
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(DeckCards);
 
 const styles = StyleSheet.create({
   container: {

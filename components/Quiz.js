@@ -4,6 +4,9 @@ import {StyleSheet, Text, View, Image, ScrollView, Button} from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {handleGetDeck} from '../actions/decks';
+import {
+  handleResetNotification,
+} from '../actions/notifications';
 
 class Quiz extends Component {
   static navigationOptions = {
@@ -61,7 +64,12 @@ class Quiz extends Component {
   };
 
   componentDidMount() {
-    this.setState({deck: this.props.deck, cards: this.props.deck.questions, loading: false});
+    this.setState({
+      deck: this.props.deck,
+      cards: this.props.deck.questions,
+      loading: false,
+    });
+    this.props.handleResetNotification();
   }
 
   displayCardNumber = () => {
@@ -162,16 +170,18 @@ class Quiz extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const { deckId } = ownProps.navigation.state.params;
+  const {deckId} = ownProps.navigation.state.params;
   return {
     loading: state.loading,
     deck: state.decks[deckId],
+    notifications: state.notifications
   };
 }
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       handleGetDeck,
+      handleResetNotification,
     },
     dispatch,
   );

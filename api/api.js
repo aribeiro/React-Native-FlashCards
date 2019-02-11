@@ -15,6 +15,7 @@ export function getDeck(key) {
 }
 
 export function saveDeckTitle({title, key}) {
+  console.log('API saveDeckTitle', title, key)
   return AsyncStorage.mergeItem(
     FLASHCARDS_STORAGE_KEY,
     JSON.stringify({
@@ -23,17 +24,16 @@ export function saveDeckTitle({title, key}) {
         questions: [],
       },
     }),
-  ).then(result => console.log(result));
+  );
 }
 
 export function submitQuestion(deck, key) {
-  console.log('API Submit Question', deck, key);
   return AsyncStorage.mergeItem(
     FLASHCARDS_STORAGE_KEY,
     JSON.stringify({
       [key]: deck,
     }),
-  ).then(result => console.log(result));
+  );
 }
 
 // const initialState = {

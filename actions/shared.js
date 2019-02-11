@@ -14,7 +14,7 @@ export function handleInitialData() {
   return dispatch => {
     API.getDecks().then(decks => {
       dispatch(getDecks(decks));
-      dispatch(updateLoading(false))
+      dispatch(updateLoading(false));
     });
   };
 }

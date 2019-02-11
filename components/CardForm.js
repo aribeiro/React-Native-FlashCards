@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Button from './Button';
-import * as API from '../api/api';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {handleAddCardToDeck} from '../actions/decks';
 
 class CardForm extends Component {
   static navigationOptions = {
@@ -38,24 +41,10 @@ class CardForm extends Component {
     const {question, answer} = this.state;
 
     if (question && answer) {
+      this.props.handleAddCardToDeck({question, answer}, deckId)
+      navigation.navigate('Deck', {deckId: deckId});
       this.setState({error: null});
 
-      API.getDeck(deckId).then(deck => {
-        const newDeck = {
-          ...deck,
-          questions: [
-            ...deck.questions,
-            {
-              question: this.state.question,
-              answer: this.state.answer,
-            },
-          ],
-        };
-
-        API.submitQuestion(newDeck, deckId);
-
-        navigation.navigate('Deck', {deckId: deckId});
-      });
     } else {
       this.setState({
         error: 'you need to add a question and answer for the New Card',
@@ -91,7 +80,19 @@ class CardForm extends Component {
   }
 }
 
-export default CardForm;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      handleAddCardToDeck,
+    },
+    dispatch,
+  );
+}
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(CardForm);
 
 const styles = StyleSheet.create({
   container: {

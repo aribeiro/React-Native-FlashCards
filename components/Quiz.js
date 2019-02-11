@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, ScrollView, Button} from 'react-native';
-import * as API from '../api/api';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {handleGetDeck} from '../actions/decks';
 
 class Quiz extends Component {
   static navigationOptions = {
@@ -58,10 +61,7 @@ class Quiz extends Component {
   };
 
   componentDidMount() {
-    const {deckId} = this.props.navigation.state.params;
-    API.getDeck(deckId).then(deck => {
-      this.setState({deck, cards: deck.questions, loading: false});
-    });
+    this.setState({deck: this.props.deck, cards: this.props.deck.questions, loading: false});
   }
 
   displayCardNumber = () => {
@@ -161,7 +161,27 @@ class Quiz extends Component {
   }
 }
 
-export default Quiz;
+function mapStateToProps(state, ownProps) {
+  const { deckId } = ownProps.navigation.state.params;
+  return {
+    loading: state.loading,
+    deck: state.decks[deckId],
+  };
+}
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      handleGetDeck,
+    },
+    dispatch,
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Quiz);
+
 const styles = StyleSheet.create({
   container: {
     flex: 3,

@@ -6,6 +6,7 @@ import DeckCard from './DeckCard';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {handleInitialData} from '../actions/shared';
+import {handleAddNotification} from '../actions/notifications';
 
 class DeckList extends Component {
   static navigationOptions = ({navigation}) => ({
@@ -37,6 +38,9 @@ class DeckList extends Component {
 
   componentDidMount() {
     this.props.handleInitialData();
+    if (!this.props.notifications) {
+      this.props.handleAddNotification();
+    }
   }
 
   render() {
@@ -62,11 +66,11 @@ class DeckList extends Component {
   }
 }
 
-function mapStateToProps({decks, loading}) {
-  console.log(decks)
+function mapStateToProps({decks, loading, notifications}) {
   return {
     decks: Object.entries(decks).map(([key, value]) => ({key, value})),
     loading,
+    notifications,
   };
 }
 
@@ -74,6 +78,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       handleInitialData,
+      handleAddNotification,
     },
     dispatch,
   );

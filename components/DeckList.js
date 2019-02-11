@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, ScrollView, Button} from 'react-native';
-
 import {MaterialHeaderButtons, Item} from './HeadersButtons';
 import DeckCard from './DeckCard';
-import * as API from '../api/api';
+
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {handleInitialData} from '../actions/shared';
 
 class DeckList extends Component {
   static navigationOptions = ({navigation}) => ({
@@ -34,17 +36,11 @@ class DeckList extends Component {
   state = {decks: [], loading: true};
 
   componentDidMount() {
-    API.getDecks().then(data => {
-      this.setState({
-        decks: Object.entries(data).map(([key, value]) => ({key, value})),
-        loading: false,
-      });
-    });
+    this.props.handleInitialData();
   }
 
   render() {
-    const {decks, loading} = this.state;
-    console.log('Deck List', decks);
+    const {decks, loading} = this.props;
     return (
       <View style={{flex: 1, width: '100%'}}>
         {loading ? (
@@ -66,4 +62,24 @@ class DeckList extends Component {
   }
 }
 
-export default DeckList;
+function mapStateToProps({decks, loading}) {
+  console.log(decks)
+  return {
+    decks: Object.entries(decks).map(([key, value]) => ({key, value})),
+    loading,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      handleInitialData,
+    },
+    dispatch,
+  );
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(DeckList);

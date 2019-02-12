@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, ScrollView, Button} from 'react-native';
+import QuizResult from './QuizResult'
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {handleGetDeck} from '../actions/decks';
-import {
-  handleResetNotification,
-} from '../actions/notifications';
 
 class Quiz extends Component {
   static navigationOptions = {
@@ -69,7 +67,6 @@ class Quiz extends Component {
       cards: this.props.deck.questions,
       loading: false,
     });
-    this.props.handleResetNotification();
   }
 
   displayCardNumber = () => {
@@ -91,13 +88,6 @@ class Quiz extends Component {
       </Text>
     );
   };
-
-  percentageScore = () => {
-    const {correct, cards} = this.state;
-    const cardTotal = cards.length;
-    return parseFloat((correct / cardTotal) * 100).toFixed(2);
-  };
-
   render() {
     const {
       loading,
@@ -156,14 +146,11 @@ class Quiz extends Component {
       );
     } else {
       return (
-        <View style={styles.container}>
-          <Text style={styles.header}>{deck.title}</Text>
-
-          <Text style={styles.endScore}>
-            You scored {correct} out of {cards.length} points.
-          </Text>
-          <Text style={styles.endScore}>{this.percentageScore()}%.</Text>
-        </View>
+        <QuizResult
+          deckTitle={deck.title}
+          correct={correct}
+          cardsLength={cards.length}
+        />
       );
     }
   }
@@ -174,14 +161,14 @@ function mapStateToProps(state, ownProps) {
   return {
     loading: state.loading,
     deck: state.decks[deckId],
-    notifications: state.notifications
+    notifications: state.notifications,
   };
 }
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
       handleGetDeck,
-      handleResetNotification,
     },
     dispatch,
   );
@@ -208,11 +195,6 @@ const styles = StyleSheet.create({
     color: '#e01c1c',
     alignSelf: 'center',
     fontSize: 25,
-    paddingBottom: 30,
-  },
-  endScore: {
-    alignSelf: 'center',
-    fontSize: 30,
     paddingBottom: 30,
   },
   answer: {

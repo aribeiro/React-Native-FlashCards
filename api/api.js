@@ -15,7 +15,6 @@ export function getDeck(key) {
 }
 
 export function saveDeckTitle({title, key}) {
-  console.log('API saveDeckTitle', title, key)
   return AsyncStorage.mergeItem(
     FLASHCARDS_STORAGE_KEY,
     JSON.stringify({

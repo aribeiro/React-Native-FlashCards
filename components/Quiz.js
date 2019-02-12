@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, ScrollView, Button} from 'react-native';
-import QuizResult from './QuizResult'
+import QuizResult from './QuizResult';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -58,6 +58,19 @@ class Quiz extends Component {
     this.setState({
       displayAnswer: !this.state.displayAnswer,
       cardIndex: this.state.cardIndex + 1,
+    });
+  };
+
+  onBackToDeck = () => {
+    const {deckId} = this.props.navigation.state.params;
+    this.props.navigation.navigate('Deck', {deckId});
+  };
+
+  onRestartQuiz = () => {
+    this.setState({
+      cardIndex: 0,
+      correct: 0,
+      displayAnswer: false,
     });
   };
 
@@ -150,6 +163,8 @@ class Quiz extends Component {
           deckTitle={deck.title}
           correct={correct}
           cardsLength={cards.length}
+          onBackToDeck={this.onBackToDeck}
+          onRestartQuiz={this.onRestartQuiz}
         />
       );
     }

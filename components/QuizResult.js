@@ -2,12 +2,9 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, Button} from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {
-  handleResetNotification,
-} from '../actions/notifications';
+import {handleResetNotification} from '../actions/notifications';
 
 class QuizResult extends Component {
-
   componentDidMount() {
     this.props.handleResetNotification();
   }
@@ -20,15 +17,20 @@ class QuizResult extends Component {
   render() {
     const {correct, cardsLength, deckTitle} = this.props;
     return (
-        <View style={styles.container}>
-          <Text style={styles.header}>{deckTitle}</Text>
+      <View style={styles.container}>
+        <Text style={styles.header}>{deckTitle}</Text>
 
-          <Text style={styles.endScore}>
-            You scored {correct} out of {cardsLength} points.
-          </Text>
-          <Text style={styles.endScore}>{this.percentageScore()}%.</Text>
+        <Text style={styles.endScore}>
+          You scored {correct} out of {cardsLength} points.
+        </Text>
+        <Text style={styles.endScore}>{this.percentageScore()}%.</Text>
+
+        <View style={styles.buttonsContainer}>
+          <Button onPress={this.props.onRestartQuiz} title="RESTART QUIZ" />
+          <Button color='#21E571' onPress={this.props.onBackToDeck} title="BACK TO DECK" />
         </View>
-    )
+      </View>
+    );
   }
 }
 
@@ -58,15 +60,16 @@ const styles = StyleSheet.create({
     fontSize: 30,
     paddingBottom: 30,
   },
-  question: {
-    color: '#e01c1c',
-    alignSelf: 'center',
-    fontSize: 25,
-    paddingBottom: 30,
-  },
   endScore: {
     alignSelf: 'center',
     fontSize: 30,
     paddingBottom: 30,
+  },
+  buttonsContainer: {
+    alignSelf: 'baseline',
+    flex: 2,
+    justifyContent: 'space-between',
+    width: '100%',
+    maxHeight: 80,
   },
 });

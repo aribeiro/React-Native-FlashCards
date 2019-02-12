@@ -11,6 +11,7 @@ import Button from './Button';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {handleSaveDeckTitle} from '../actions/decks';
+import {isNullOrWhiteSpace} from '../utils';
 
 class DeckForm extends Component {
   static navigationOptions = {
@@ -32,7 +33,7 @@ class DeckForm extends Component {
 
   onPressButton = () => {
     const {name} = this.state;
-    if (this.state.name) {
+    if (!isNullOrWhiteSpace(this.state.name)) {
       // Generating KEY for AsyncStorage
       const key = new Date().valueOf();
       this.props.handleSaveDeckTitle(name, key);

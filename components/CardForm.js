@@ -11,6 +11,7 @@ import Button from './Button';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {handleAddCardToDeck} from '../actions/decks';
+import {isNullOrWhiteSpace} from '../utils';
 
 class CardForm extends Component {
   static navigationOptions = {
@@ -40,7 +41,7 @@ class CardForm extends Component {
     const {deckId} = navigation.state.params;
     const {question, answer} = this.state;
 
-    if (question && answer) {
+    if (!isNullOrWhiteSpace(question) && !isNullOrWhiteSpace(answer)) {
       this.props.handleAddCardToDeck({question, answer}, deckId)
       navigation.navigate('Deck', {deckId: deckId});
       this.setState({error: null});

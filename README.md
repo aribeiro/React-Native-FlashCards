@@ -24,3 +24,6 @@ To install al requirements for the APP, go to root path and run the following co
 To run the API server run:
 
 `yarn expo`, `yarn start` or `npm start`
+
+
+
